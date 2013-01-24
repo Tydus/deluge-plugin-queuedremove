@@ -1,0 +1,7 @@
+*.pyc
+*.swp
+*~
+build/
+dist/
+QueuedRemove.egg-info/
+create_dev_link.sh
