@@ -46,7 +46,7 @@ __version__ = "0.1"
 __url__ = ""
 __license__ = "GPLv3"
 __description__ = ""
-__long_description__ = """"""
+__long_description__ = """Maintain a (user selected) task queue, and remove top of it while the disk is full."""
 __pkg_data__ = {__plugin_name__.lower(): ["template/*", "data/*"]}
 
 setup(
