@@ -168,27 +168,65 @@ class Core(CorePluginBase):
     @export
     def queue_top(self, *tids):
         """Move torrent(s) and all the same torrents in the same priority to top of the queue"""
-        pass
+        for i in reversed(get_rp_groups(*tids)):
+            tmp=self.rq[i]
+            del self.rq[i]
+            self.rq.insert(tmp)
+
+        return self.apply_queue_change()
 
     @export
     def queue_bottom(self, *tids):
         """Move torrent(s) and all the same torrents in the same priority to bottom of the queue"""
-        pass
+        for i in get_rp_groups(*tids):
+            tmp=self.rq[i]
+            del self.rq[i]
+            self.rq.append(tmp)
+
+        return self.apply_queue_change()
 
     @export
     def queue_forward(self, *tids):
         """Move torrent(s) forward in the queue"""
-        pass
+        for i in sorted(get_rp_groups(*tids)):
+            # Filter out the first one
+            if i!=0:
+                # Swap with the one before it
+                self.rq[i-1],self.rq[i]=self.rq[i],self.rq[i-1]
+
+        return self.apply_queue_change()
 
     @export
     def queue_back(self, *tids):
         """Move torrent(s) back in the queue"""
-        pass
+        for i in reversed(sorted(get_rp_groups(*tids))):
+            # Filter out the last one
+            if i!=len(self.rq):
+                # Swap with the one after it
+                self.rq[i],self.rq[i+1]=self.rq[i+1],self.rq[i]
+
+        return self.apply_queue_change()
 
     @export
     def queue_set(self, *tids, pos):
         """Force set torrent's(s') queue position"""
-        pass
+        for i in tids:
+            rp=self.remove_priorities[i]
+            if not rp:
+                self.warning("Torrent %s is not in the queue"%i)
+                continue
+            self.rq[rp].remove(i)
+
+        # Put all of tid into self.rq[pos]
+        # Don't need to validate because apply_queue_change() will do it
+        if pos<0:
+            self.rq.insert(0,tids)
+        elif pos>len(self.rq):
+            self.rq.append(tids)
+        else:
+            self.rq[pos]+=tids
+
+        return self.apply_queue_change()
 
     # Triggers
     def post_torrent_remove(self,tid):
