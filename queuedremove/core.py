@@ -53,10 +53,22 @@ class Core(CorePluginBase):
 
     # Interfaces
     def enable(self):
+        log.info("QueuedRemove plugin enabled")
+
+        self.torrents = component.get("Core").torrentmanager.torrents
         self.config = deluge.configmanager.ConfigManager("queuedremove.conf", DEFAULT_PREFS)
+        component.get("EventManager").register_event_handler("TorrentRemovedEvent", self.post_torrent_remove)
+
+        self.rq=self.config["rq"]
+        self.remove_priorities={}
+
+        self.check_timer = LoopingCall(self.check_and_remove)
+        self.check_timer.start(60)
+
 
     def disable(self):
-        pass
+        self.check_timer.stop()
+        log.info("QueuedRemove plugin disabled")
 
     def update(self):
         pass
