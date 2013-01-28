@@ -71,6 +71,46 @@ class Core(CorePluginBase):
         """Returns the config dictionary"""
         return self.config.config
 
+    # Utilities
+    def get_rp_groups(self, *tids):
+        """Get Remove Priority Groups from tids"""
+        ret=[]
+        for i in tids:
+            rp=self.remove_priorities[i]
+            if not rp:
+                self.warning("Torrent %s is not in the queue"%i)
+                continue
+            if rp not in ret:
+                ret.append(rp)
+        return ret
+
+    def remove_invalid_torrent(self):
+        """Remove invalid torrent from the remove queue"""
+        for i,p in enumerate(self.rq):
+            # Filter out invalid torrent_id
+            self.rq[i]=filter(lambda x: x in self.torrents, p)
+
+        # Filter out empty priority
+        self.rq=filter(lambda x: x!=[], self.rq)
+
+    def update_request_priorities(self):
+        """Update request_priorities list of every """
+        # Prepare a clear list
+        rp=dict(map(lambda x:(x,None),self.torrent.keys()))
+
+        # Update list if a torrent has priority
+        for i,p in enumerate(self.rq):
+            for j in p:
+                rp[j]=i
+
+        self.request_priorities=rp
+
+    def apply_queue_change(self):
+        """Apply a queue change"""
+        self.remove_invalid_torrent()
+        self.update_request_priorities()
+        return self.config.save()
+
     # Exports
     @export
     def add(self, *tids, ascend=True):
