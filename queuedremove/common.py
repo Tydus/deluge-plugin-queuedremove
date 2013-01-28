@@ -1,7 +1,7 @@
 #
 # common.py
 #
-# Copyright (C) 2009 Tydus <Tydus@Tydus.org>
+# Copyright (C) 2013 Tydus <Tydus@Tydus.org>
 #
 # Basic plugin template created by:
 # Copyright (C) 2008 Martijn Voncken <mvoncken@gmail.com>
