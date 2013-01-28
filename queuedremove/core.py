@@ -160,7 +160,9 @@ class Core(CorePluginBase):
     # Triggers
     def post_torrent_remove(self,tid):
         """Trigger after remove a torrent"""
-        pass
+        log.debug("post_torrent_remove")
+        self.remove(tid)
+
     def check_and_remove(self):
         """Check if needed and do remove from the queue"""
         pass
