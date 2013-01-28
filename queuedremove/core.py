@@ -59,12 +59,13 @@ class Core(CorePluginBase):
         self.config = deluge.configmanager.ConfigManager("queuedremove.conf", DEFAULT_PREFS)
         component.get("EventManager").register_event_handler("TorrentRemovedEvent", self.post_torrent_remove)
 
+        # Remove queue, save to disk
         self.rq=self.config["rq"]
+        # Remove priorities, only cached in memory
         self.remove_priorities={}
 
         self.check_timer = LoopingCall(self.check_and_remove)
         self.check_timer.start(60)
-
 
     def disable(self):
         self.check_timer.stop()
