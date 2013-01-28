@@ -133,12 +133,37 @@ class Core(CorePluginBase):
         if ascend is True, then the torrents will be assign ascending priorities
         if False, the torrents will be assigned same priority
         """
-        pass
+
+        # Don't worry about empty priority, 
+        # because this will be corrected during apply_queue_change()
+        self.rq.append([])
+        for i in tids:
+            if self.remove_priorities[i]:
+                self.warning("Torrent %s already in queue with priority %d"%(
+                    i,self.remove_priorities[i]
+                ))
+                continue
+            if ascend:
+                # Add to a new priority
+                self.rq.append([i])
+            else:
+                # Add to the last priority
+                self.rq[-1].append(i)
+
+        return self.apply_queue_change()
 
     @export
     def remove(self, *tids):
         """Remove torrent(s) from the queue"""
-        pass
+        for i in tids:
+            rp=self.remove_priorities[i]
+            if not rp:
+                self.warning("Torrent %s is not in the queue"%i)
+                continue
+            # Remove the torrent from queue
+            self.rq[rp].remove(i)
+
+        return self.apply_queue_change()
 
     @export
     def queue_top(self, *tids):
