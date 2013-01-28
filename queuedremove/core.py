@@ -237,5 +237,36 @@ class Core(CorePluginBase):
 
     def check_and_remove(self):
         """Check if needed and do remove from the queue"""
-        pass
+        log.debug("Checking remaining disk space")
+        free_space=component.get("Core").core.get_free_space()
+
+        log.debug("Free disk space: %s bytes"%free_space)
+
+        # Check if disk space is above the remove threshold
+        if free_space>self.config["remove_threshold"]:
+            log.debug("The disk space is above the threshold, do nothing")
+            return True
+
+        log.info("The disk space is below the threshold, remove torrents in the queue")
+        
+        # Check if the queue is empty
+        if self.rq=[]:
+            log.warning("The queue is empty, abort")
+            return False
+
+        # Attention: don't use remaining disk space here due to disk space recycle latency
+        # FIXME: if some torrents share spaces, 
+        #        then the space actually recycled will be less than we calculated, 
+        #        but it's OK at most times because we will come back 1 minute later.
+        total_freed=0
+        while total_freed<self.config["stop_threshold"]:
+            rq_top=self.rq[0]
+            # Remove all torrents in the cell
+            for i in self.rq[0]
+                # this value is an upper bound of the space we freed
+                total_freed+=self.torrents[i].get_status("total_wanted_done")["total_wanted_done"]
+                component.get("TorrentManager").remove(i, remove_date=True)
+            del self.rq[0]
+
+        return self.apply_queue_change()
 
