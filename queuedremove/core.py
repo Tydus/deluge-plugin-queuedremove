@@ -48,6 +48,8 @@ DEFAULT_PREFS = {
 }
 
 class Core(CorePluginBase):
+
+    # Interfaces
     def enable(self):
         self.config = deluge.configmanager.ConfigManager("queuedremove.conf", DEFAULT_PREFS)
 
@@ -68,3 +70,56 @@ class Core(CorePluginBase):
     def get_config(self):
         """Returns the config dictionary"""
         return self.config.config
+
+    # Exports
+    @export
+    def add(self, *tids, ascend=True):
+        """
+        Add torrent(s) into the queue
+        if ascend is True, then the torrents will be assign ascending priorities
+        if False, the torrents will be assigned same priority
+        """
+        pass
+
+    @export
+    def remove(self, *tids):
+        """Remove torrent(s) from the queue"""
+        pass
+
+    @export
+    def queue_top(self, *tids):
+        """Move torrent(s) and all the same torrents in the same priority to top of the queue"""
+        pass
+
+    @export
+    def queue_bottom(self, *tids):
+        """Move torrent(s) and all the same torrents in the same priority to bottom of the queue"""
+        pass
+
+    @export
+    def queue_forward(self, *tids):
+        """Move torrent(s) forward in the queue"""
+        pass
+
+    @export
+    def queue_back(self, *tids):
+        """Move torrent(s) back in the queue"""
+        pass
+
+    @export
+    def queue_set(self, *tids, ascend=False):
+        """
+        Force set torrent's(s') queue position
+        if ascend is True, then the torrents will be assign ascending priorities
+        if False, the torrents will be assigned same priority
+        """
+        pass
+
+    # Triggers
+    def post_torrent_remove(self,tid):
+        """Trigger after remove a torrent"""
+        pass
+    def check_and_remove(self):
+        """Check if needed and do remove from the queue"""
+        pass
+
