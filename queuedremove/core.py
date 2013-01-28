@@ -44,7 +44,9 @@ import deluge.configmanager
 from deluge.core.rpcserver import export
 
 DEFAULT_PREFS = {
-    "test":"NiNiNi"
+    "remove_threshold": 104857600, # 100 MiB
+    "stop_threshold": 1073741824, # 1 GiB
+    "remove_queue": [] # [[torrent_id,...],[torrent_id,...],...]
 }
 
 class Core(CorePluginBase):
