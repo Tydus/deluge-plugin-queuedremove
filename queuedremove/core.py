@@ -161,12 +161,8 @@ class Core(CorePluginBase):
         pass
 
     @export
-    def queue_set(self, *tids, ascend=False):
-        """
-        Force set torrent's(s') queue position
-        if ascend is True, then the torrents will be assign ascending priorities
-        if False, the torrents will be assigned same priority
-        """
+    def queue_set(self, *tids, pos):
+        """Force set torrent's(s') queue position"""
         pass
 
     # Triggers
