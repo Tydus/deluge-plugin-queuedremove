@@ -69,11 +69,19 @@ class Core(CorePluginBase):
         # Remove priorities, only cached in memory
         self.remove_priorities={}
 
+        # Register Torrent status field
+        component.CorePluginManager.register_status_field("remove_priority", self.status_get_priority)
+
+        # Start a timer to check and remove once a minute
         self.check_timer = LoopingCall(self.check_and_remove)
         self.check_timer.start(60)
 
     def disable(self):
+
         self.check_timer.stop()
+
+        component.CorePluginManager.deregister_status_field("remove_priority")
+
         log.info("QueuedRemove plugin disabled")
 
     def update(self):
@@ -235,6 +243,9 @@ class Core(CorePluginBase):
         return self.apply_queue_change()
 
     # Triggers
+    def status_get_priority(self,tid):
+        return self.remove_priorities[tid]
+
     def post_torrent_remove(self,tid):
         """Trigger after remove a torrent"""
         log.debug("post_torrent_remove")
