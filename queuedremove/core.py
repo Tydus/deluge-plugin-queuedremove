@@ -39,7 +39,7 @@
 
 from deluge.log import LOG as log
 from deluge.plugins.pluginbase import CorePluginBase
-import deluge.component as component
+import deluge.component as _component
 import deluge.configmanager
 from deluge.core.rpcserver import export
 
@@ -49,15 +49,20 @@ DEFAULT_PREFS = {
     "remove_queue": [] # [[torrent_id,...],[torrent_id,...],...]
 }
 
+# A Synactic Sugar to component.get()
+class component(Object):
+    def __getattribute__(self,attr):
+        return _component.get(attr)
+
 class Core(CorePluginBase):
 
     # Interfaces
     def enable(self):
         log.info("QueuedRemove plugin enabled")
 
-        self.torrents = component.get("Core").torrentmanager.torrents
+        self.torrents = component.Core.torrentmanager.torrents
         self.config = deluge.configmanager.ConfigManager("queuedremove.conf", DEFAULT_PREFS)
-        component.get("EventManager").register_event_handler("TorrentRemovedEvent", self.post_torrent_remove)
+        component.EventManager.register_event_handler("TorrentRemovedEvent", self.post_torrent_remove)
 
         # Remove queue, save to disk
         self.rq=self.config["rq"]
@@ -238,7 +243,7 @@ class Core(CorePluginBase):
     def check_and_remove(self):
         """Check if needed and do remove from the queue"""
         log.debug("Checking remaining disk space")
-        free_space=component.get("Core").core.get_free_space()
+        free_space=component.Core.core.get_free_space()
 
         log.debug("Free disk space: %s bytes"%free_space)
 
@@ -265,7 +270,7 @@ class Core(CorePluginBase):
             for i in self.rq[0]
                 # this value is an upper bound of the space we freed
                 total_freed+=self.torrents[i].get_status("total_wanted_done")["total_wanted_done"]
-                component.get("TorrentManager").remove(i, remove_date=True)
+                component.TorrentManager.remove(i, remove_date=True)
             del self.rq[0]
 
         return self.apply_queue_change()
