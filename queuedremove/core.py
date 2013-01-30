@@ -104,7 +104,7 @@ class Core(CorePluginBase):
         """Get Remove Priority Groups from tids"""
         ret=[]
         for i in tids:
-            rp=self.remove_priorities[i]
+            rp=self.remove_priorities.get(i)
             if not rp:
                 self.warning("Torrent %s is not in the queue"%i)
                 continue
@@ -123,10 +123,7 @@ class Core(CorePluginBase):
 
     def update_remove_priorities(self):
         """Update remove_priorities list"""
-        # Prepare a clear list
-        rp=dict(map(lambda x:(x,None),self.torrent.keys()))
-
-        # Update list if a torrent has priority
+        rp={}
         for i,p in enumerate(self.rq):
             for j in p:
                 rp[j]=i
@@ -152,7 +149,7 @@ class Core(CorePluginBase):
         # because this will be corrected during apply_queue_change()
         self.rq.append([])
         for i in tids:
-            if self.remove_priorities[i]:
+            if self.remove_priorities.get(i):
                 self.warning("Torrent %s already in queue with priority %d"%(
                     i,self.remove_priorities[i]
                 ))
@@ -170,7 +167,7 @@ class Core(CorePluginBase):
     def remove(self, *tids):
         """Remove torrent(s) from the queue"""
         for i in tids:
-            rp=self.remove_priorities[i]
+            rp=self.remove_priorities.get(i)
             if not rp:
                 self.warning("Torrent %s is not in the queue"%i)
                 continue
@@ -225,7 +222,7 @@ class Core(CorePluginBase):
     def queue_set(self, *tids, pos):
         """Force set torrent's(s') queue position"""
         for i in tids:
-            rp=self.remove_priorities[i]
+            rp=self.remove_priorities.get(i)
             if not rp:
                 self.warning("Torrent %s is not in the queue"%i)
                 continue
@@ -244,7 +241,7 @@ class Core(CorePluginBase):
 
     # Triggers
     def status_get_priority(self,tid):
-        return self.remove_priorities[tid]
+        return self.remove_priorities.get(tid,"")
 
     def post_torrent_remove(self,tid):
         """Trigger after remove a torrent"""
