@@ -70,7 +70,10 @@ class Core(CorePluginBase):
         self.remove_priorities={}
 
         # Register Torrent status field
-        component.CorePluginManager.register_status_field("remove_priority", self.status_get_priority)
+        component.CorePluginManager.register_status_field(
+            "remove_priority",
+            lambda tid:self.remove_priorities.get(tid,"")
+        )
 
         # Start a timer to check and remove once a minute
         self.check_timer = LoopingCall(self.check_and_remove)
@@ -240,9 +243,6 @@ class Core(CorePluginBase):
         return self.apply_queue_change()
 
     # Triggers
-    def status_get_priority(self,tid):
-        return self.remove_priorities.get(tid,"")
-
     def post_torrent_remove(self,tid):
         """Trigger after remove a torrent"""
         log.debug("post_torrent_remove")
