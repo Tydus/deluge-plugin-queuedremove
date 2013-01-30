@@ -121,8 +121,8 @@ class Core(CorePluginBase):
         # Filter out empty priority
         self.rq=filter(lambda x: x!=[], self.rq)
 
-    def update_request_priorities(self):
-        """Update request_priorities list of every """
+    def update_remove_priorities(self):
+        """Update remove_priorities list"""
         # Prepare a clear list
         rp=dict(map(lambda x:(x,None),self.torrent.keys()))
 
@@ -131,12 +131,12 @@ class Core(CorePluginBase):
             for j in p:
                 rp[j]=i
 
-        self.request_priorities=rp
+        self.remove_priorities=rp
 
     def apply_queue_change(self):
         """Apply a queue change"""
         self.remove_invalid_torrent()
-        self.update_request_priorities()
+        self.update_remove_priorities()
         return self.config.save()
 
     # Exports
