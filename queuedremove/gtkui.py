@@ -42,7 +42,7 @@ import gtk
 from deluge.log import LOG as log
 from deluge.ui.client import client
 from deluge.plugins.pluginbase import GtkPluginBase
-import deluge.component as component
+from common import component
 import deluge.common
 
 from common import get_resource
@@ -51,14 +51,14 @@ class GtkUI(GtkPluginBase):
     def enable(self):
         self.glade = gtk.glade.XML(get_resource("config.glade"))
 
-        component.get("Preferences").add_page("QueuedRemove", self.glade.get_widget("prefs_box"))
-        component.get("PluginManager").register_hook("on_apply_prefs", self.on_apply_prefs)
-        component.get("PluginManager").register_hook("on_show_prefs", self.on_show_prefs)
+        component.Preferences.add_page("QueuedRemove", self.glade.get_widget("prefs_box"))
+        component.PluginManager.register_hook("on_apply_prefs", self.on_apply_prefs)
+        component.PluginManager.register_hook("on_show_prefs", self.on_show_prefs)
 
     def disable(self):
-        component.get("Preferences").remove_page("QueuedRemove")
-        component.get("PluginManager").deregister_hook("on_apply_prefs", self.on_apply_prefs)
-        component.get("PluginManager").deregister_hook("on_show_prefs", self.on_show_prefs)
+        component.Preferences.remove_page("QueuedRemove")
+        component.PluginManager.deregister_hook("on_apply_prefs", self.on_apply_prefs)
+        component.PluginManager.deregister_hook("on_show_prefs", self.on_show_prefs)
 
     def on_apply_prefs(self):
         log.debug("applying prefs for QueuedRemove")

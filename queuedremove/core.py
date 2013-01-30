@@ -39,7 +39,7 @@
 
 from deluge.log import LOG as log
 from deluge.plugins.pluginbase import CorePluginBase
-import deluge.component as _component
+from common import component
 import deluge.configmanager
 from deluge.core.rpcserver import export
 
@@ -48,11 +48,6 @@ DEFAULT_PREFS = {
     "stop_threshold": 1073741824, # 1 GiB
     "remove_queue": [] # [[torrent_id,...],[torrent_id,...],...]
 }
-
-# A Synactic Sugar to component.get()
-class component(Object):
-    def __getattribute__(self,attr):
-        return _component.get(attr)
 
 class Core(CorePluginBase):
 

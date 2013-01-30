@@ -40,3 +40,11 @@
 def get_resource(filename):
     import pkg_resources, os
     return pkg_resources.resource_filename("queuedremove", os.path.join("data", filename))
+
+
+import deluge.component as _component
+# A Synactic Sugar to component.get()
+class component(Object):
+    def __getattribute__(self,attr):
+        return _component.get(attr)
+
